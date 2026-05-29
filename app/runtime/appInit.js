@@ -9,8 +9,22 @@ const addStyles = (styles) => {
 }
 
 const addContainers = () => {
-    const landing = level.helper.dom.add(document.body, "div", "landing max")
-    console.log(landing)
+    const landing = level.helper.dom.add(document.body, "div", "landing max center transparent time1000")
+    landing.innerHTML = `
+        <ul class="wellcomeBox column center">
+            <li>Level</li>
+            <li>Modular Framework</li>
+            <li class="landingBarBox"></li>
+        </ul>
+    `
+    return {
+        'landing': landing,
+        'wellcomeBox': document.querySelector(".wellcomeBox")
+    }
+}
+
+const animate = async () => {
+
 }
 
 const init = async () => {
@@ -21,12 +35,19 @@ const init = async () => {
     console.log(level)
 
     const styles = {
+        clases: "/app/styles/classes.css",
         main: "/app/styles/main.css",
-        clases: "/app/styles/classes.css"
     }
 
     addStyles(styles)
-    addContainers()
+    await level.helper.timer.sleep(50)
+    const containers = addContainers()
+    await level.helper.timer.sleep(50)
+
+    const time = level.helper.timer.getTransition(containers.landing)
+    await level.helper.timer.sleep(time)
+    containers.landing.classList.remove("transparent")
+    await level.helper.timer.sleep(time)
 
 }
 init()

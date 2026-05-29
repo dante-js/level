@@ -1,7 +1,16 @@
+/* size */
 .max {
     width: 100%;
     height: 100%;
 }
 
+/* display */
+.center {display: flex; justify-content: center; align-items: center;}
+.column {display: flex; flex-direction: column;}
+
+/* visibility */
 .transparent {opacity: 0;}
 .visible {opacity: 1}
+
+/* transition */
+.time1000 {transition: 1000ms;}
