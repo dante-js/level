@@ -1,10 +1,16 @@
 const addStyles = (styles) => {
-    styles.forEach(item => {
+    Object.entries(styles).forEach(([name, url]) => {
         const newLink = document.createElement("link")
-        newLink.href = item
+        newLink.setAttribute("data-name", name)
+        newLink.href = level.route + url
         newLink.rel = "stylesheet"
         document.head.appendChild(newLink)
     })
+}
+
+const addContainers = () => {
+    const landing = level.helper.dom.add(document.body, "div", "landing max")
+    console.log(landing)
 }
 
 const init = async () => {
@@ -14,10 +20,13 @@ const init = async () => {
     await levelModule.addGlobal()
     console.log(level)
 
-    const styles = [
-        `${level.route}/app/styles/main.css`
-    ]
+    const styles = {
+        main: "/app/styles/main.css",
+        clases: "/app/styles/classes.css"
+    }
+
     addStyles(styles)
+    addContainers()
 
 }
 init()
