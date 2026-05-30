@@ -9,22 +9,24 @@ const addStyles = (styles) => {
 }
 
 const addContainers = () => {
-    const landing = level.helper.dom.add(document.body, "div", "landing max center transparent time1000")
+    const landing = level.helper.dom.add(document.body, "div", "landing max center")
     landing.innerHTML = `
-        <ul class="wellcomeBox column center">
-            <li>Level</li>
-            <li>Modular Framework</li>
-            <li class="landingBarBox"></li>
-        </ul>
+        <div class="wellcomeBox">
+            <div class="wellcomeTitles column">
+                <span class="title level">Level</span>
+                <span class="title frame">Modular Framework</span>
+                <div class="landingBarBox"></div>
+            </div>
+        </div>
     `
     return {
         'landing': landing,
-        'wellcomeBox': document.querySelector(".wellcomeBox")
+        'wellcomeBox': document.querySelector(".wellcomeBox"),
+        'level': document.querySelector(".level")
     }
 }
 
-const animate = async () => {
-
+const animateIntro = async (containers) => {
 }
 
 const init = async () => {
@@ -35,19 +37,16 @@ const init = async () => {
     console.log(level)
 
     const styles = {
-        clases: "/app/styles/classes.css",
-        main: "/app/styles/main.css",
+        clases: `${level.route}/app/styles/classes.css`,
+        main: `${level.route}/app/styles/main.css`,
+        config: `${level.route}/app/styles/config.css`
     }
 
     addStyles(styles)
-    await level.helper.timer.sleep(50)
     const containers = addContainers()
+    level.helper.fonts.add({name: "neuropol", src: `${level.route}/app/src/fonts/neuropol.otf`})
     await level.helper.timer.sleep(50)
 
-    const time = level.helper.timer.getTransition(containers.landing)
-    await level.helper.timer.sleep(time)
-    containers.landing.classList.remove("transparent")
-    await level.helper.timer.sleep(time)
-
+    animateIntro(containers)
 }
 init()

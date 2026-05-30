@@ -8,9 +8,10 @@
 .center {display: flex; justify-content: center; align-items: center;}
 .column {display: flex; flex-direction: column;}
 
+.row {display: flex; }
+.row_H_center {display: flex; justify-content: center;}
+
 /* visibility */
 .transparent {opacity: 0;}
 .visible {opacity: 1}
 
-/* transition */
-.time1000 {transition: 1000ms;}

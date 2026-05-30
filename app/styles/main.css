@@ -13,15 +13,40 @@ body {
     height: 100dvh;
 
     .landing {
+
         background-color: rgb(220, 220, 220);
+        --boxPadding: 20px;
 
         .wellcomeBox {
             width: 600px;
-            height: 300px;
+            height: 0px;
             border-radius: 16px;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
-            background-size: 3px 3px;
-            background-color: rgb(40, 40, 40);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+
+            .wellcomeTitles {
+                width: calc(100% - 2 * var(--boxPadding));
+                height: 200px;
+                margin: 20px 20px 0px 20px;
+                border: 1px solid red;
+
+                .title {
+                    display: flex;
+                    width: 100%;
+                }
+
+                .level {
+                    font-size: 44px;
+                    font-family: "neuropol";
+                    color: rgb(60, 60, 60);
+                    letter-spacing: 6px;
+                }
+            }
+        }
+
+        .wellcomeBoxOpen {
+            height: 300px;
         }
     }
 }
