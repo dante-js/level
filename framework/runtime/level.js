@@ -7,11 +7,13 @@ export const addGlobal = async () => {
     level.route = route
     /* helper */
     level.helper = {}
-    const [dom, fonts, timer] = await Promise.all([
+    const [css, dom, fonts, timer] = await Promise.all([
+        import(`${route}/framework/dependencies/helpers/css.js`),
         import(`${route}/framework/dependencies/helpers/dom.js`),
         import(`${route}/framework/dependencies/helpers/fonts.js`),
         import(`${route}/framework/dependencies/helpers/timer.js`)
     ])
+    level.helper.css = css
     level.helper.dom = dom
     level.helper.fonts = fonts
     level.helper.timer = timer

@@ -7,11 +7,11 @@
 /* display */
 .center {display: flex; justify-content: center; align-items: center;}
 .column {display: flex; flex-direction: column;}
+.column_spacing {display: flex; flex-direction: column; justify-content: space-between}
 
 .row {display: flex; }
 .row_H_center {display: flex; justify-content: center;}
 
-/* visibility */
-.transparent {opacity: 0;}
-.visible {opacity: 1}
-
+/* positions */
+.absolute {position: absolute;}
+.relative {position: relative;}

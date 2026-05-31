@@ -12,41 +12,80 @@ body {
     height: 100vh;
     height: 100dvh;
 
-    .landing {
+    .landingSection {
+        transition: var(--global_transition);
 
-        background-color: rgb(220, 220, 220);
-        --boxPadding: 20px;
+        .landingBox {
+            display: flex;
+            width: 540px;
+            height: 140px;
+            cursor: pointer;
+            transition: var(--global_transition);
 
-        .wellcomeBox {
-            width: 600px;
-            height: 0px;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-
-            .wellcomeTitles {
-                width: calc(100% - 2 * var(--boxPadding));
-                height: 200px;
-                margin: 20px 20px 0px 20px;
-                border: 1px solid red;
+            .titles {
+                height: 100%;
+                padding: 20px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 16px;
+                margin-right: 14px;
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4), inset 2px 2px 4px transparent;
+                transition: 300ms ease-in-out;
 
                 .title {
                     display: flex;
-                    width: 100%;
+                    width: fit-content;
                 }
 
-                .level {
+                .levelBox {
+                    width: 100%;
                     font-size: 44px;
                     font-family: "neuropol";
                     color: rgb(60, 60, 60);
+                    font-weight: bolder;
                     letter-spacing: 6px;
+                    margin-bottom: 10px;
+                    transition: 300ms ease-in-out;
+                }
+
+                .frame {
+                    top: 10px;
+                    width: fit-content;
+                    font-size: 16px;
+                    font-family: "ronduit";
+                    color: rgb(170, 170, 170);
+                    font-weight: bolder;
+                    letter-spacing: 2px;
+                    margin-left: 90px;
                 }
             }
-        }
 
-        .wellcomeBoxOpen {
-            height: 300px;
+            .entry {
+                width: 54px;
+                height: 100%;
+                padding: 0 8px;
+                border-radius: 8px;
+                font-family: "matrix";
+                font-size: 18px;
+                color: rgb(255, 255, 255);
+                letter-spacing: 4px;
+                background-color: rgb(60, 60, 60);
+                transition: 300ms ease-in-out;
+            }
+
+            &:hover {
+                .titles {
+                    box-shadow: 2px 2px 4px transparent, inset 2px 2px 4px rgba(0, 0, 0, 0.4);
+                }
+
+                .level {
+                    color: rgb(49, 105, 101);
+                }
+
+                .entry {
+                    color: rgb(155, 218, 255);
+                    background-color: rgb(49, 105, 101);
+                }
+            }
         }
     }
 }

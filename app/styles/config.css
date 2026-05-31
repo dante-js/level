@@ -1,4 +1,10 @@
 :root {
-    --landing_opacity: 0;
-    --landing_transition: 0;
+
+    /* global */
+    --global_transition: 1s ease-in-out;
+
+    /* landing */
+    --landingBox_height: 200px;
+
+
 }

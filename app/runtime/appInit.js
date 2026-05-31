@@ -1,32 +1,52 @@
 const addStyles = (styles) => {
-    Object.entries(styles).forEach(([name, url]) => {
-        const newLink = document.createElement("link")
-        newLink.setAttribute("data-name", name)
-        newLink.href = level.route + url
-        newLink.rel = "stylesheet"
-        document.head.appendChild(newLink)
+    const promises = Object.entries(styles).map(([name, url]) => {
+        return new Promise((resolve, reject) => {
+            const newLink = document.createElement("link")
+            newLink.setAttribute("data-name", name)
+            newLink.href = level.route + url
+            newLink.rel = "stylesheet"
+
+            newLink.onload = () => resolve()
+            newLink.onerror = () => reject(new Error(`Error CSS: ${url}`))
+
+            document.head.appendChild(newLink)
+        })
     })
+    Promise.all(promises)
 }
 
 const addContainers = () => {
-    const landing = level.helper.dom.add(document.body, "div", "landing max center")
+    const landing = level.helper.dom.add(document.body, "div", "landingSection max center")
     landing.innerHTML = `
-        <div class="wellcomeBox">
-            <div class="wellcomeTitles column">
-                <span class="title level">Level</span>
-                <span class="title frame">Modular Framework</span>
-                <div class="landingBarBox"></div>
+        <div class="landingBox relative">
+            <div class="titles column">
+                <ul class="title levelBox">
+                    <li class="char">L</li>
+                    <li class="char">e</li>
+                    <li class="char">v</li>
+                    <li class="char">e</li>
+                    <li class="char">l</li>
+                </ul>
+                <span class="title frame relative">Modular Framework</span>
             </div>
+            <div class="entry center">Go</div>
         </div>
     `
     return {
-        'landing': landing,
-        'wellcomeBox': document.querySelector(".wellcomeBox"),
+        'landingSection': landing,
+        'landingBox': document.querySelector(".landingBox"),
         'level': document.querySelector(".level")
     }
 }
 
 const animateIntro = async (containers) => {
+    console.log(containers)
+    const timming = level.helper.timer.getTransition(containers.landingSection)
+    /* landingSection */
+    containers.landingSection.style.opacity = 1
+    await level.helper.timer.sleep(timming)
+    /* landingBox */
+    containers.landingBox.style.opacity = 1
 }
 
 const init = async () => {
@@ -34,7 +54,6 @@ const init = async () => {
 
     const levelModule = await import("/framework/runtime/level.js")
     await levelModule.addGlobal()
-    console.log(level)
 
     const styles = {
         clases: `${level.route}/app/styles/classes.css`,
@@ -42,9 +61,20 @@ const init = async () => {
         config: `${level.route}/app/styles/config.css`
     }
 
-    addStyles(styles)
-    const containers = addContainers()
-    level.helper.fonts.add({name: "neuropol", src: `${level.route}/app/src/fonts/neuropol.otf`})
+    const fonts = [
+        { name: "neuropol", src: `${level.route}/app/src/fonts/neuropol.otf` },
+        { name: "ronduit", src: `${level.route}/app/src/fonts/ronduitCapitals-light.woff` },
+        {name: "xolonium", src: `${level.route}/app/src/fonts/Xolonium-Regular.otf`},
+        {name: "digi", src: `${level.route}/app/src/fonts/ds-digi.ttf`},
+        {name: "matrix", src: `${level.route}/app/src/fonts/whitrabt-webfont.woff`}
+    ]
+
+    const [containers] = await Promise.all([
+        addContainers(),
+        addStyles(styles),
+        fonts.forEach(font => level.helper.fonts.add(font))
+    ])
+
     await level.helper.timer.sleep(50)
 
     animateIntro(containers)
