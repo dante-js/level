@@ -18,18 +18,32 @@ const addStyles = (styles) => {
 const addContainers = () => {
     const landing = level.helper.dom.add(document.body, "div", "landingSection max center")
     landing.innerHTML = `
-        <div class="landingBox">
-            <div class="titles column_spacing">
-                <div class="title level">Level</div>
-                <span class="title frame"></span>
+        <div class="landingBox row_spaceBetween">
+            <div class="leftBox column_spaceBetween">
+                <div class="titles">
+                    <div class="title level center_v">Level</div>
+                    <hr>
+                    <span class="title frame center_v"></span>
+                </div>
+
+                <ul class="frameInfo row_spaceBetween">
+                    <li class="infoBox row_spaceBetween">Components<span id="infoComponents" class="infoNum relative">100</span></li>
+                    <li class="infoBox row_spaceBetween">Animations<span id="infoAnimations" class="infoNum relative">100</span></li>
+                    <li class="infoBox row_spaceBetween">Helpers<span id="infoHelpers" class="infoNum relative">100</span></li>
+                </ul>
             </div>
-            <div class="entry center">Go</div>
+            <div class="accessBox center relative">
+                <div class="progressBack max"></div>
+                <span class="go absolute center">Go</div>
+            </div>
         </div>
     `
     return {
         'landingSection': landing,
         'landingBox': document.querySelector(".landingBox"),
-        'frame': document.querySelector(".frame")
+        'leftBox': document.querySelector(".leftBox"),
+        'frame': document.querySelector(".frame"),
+        'progress': document.querySelector(".progressBack")
     }
 }
 
@@ -38,7 +52,8 @@ const animateTextStyle = `
             --time: 800ms ease-in-out;
 
             .charBox {
-                font-size: 18px;
+                font-size: 14px;
+                font-family: "ronduit";
                 font-family: "ronduit";
                 color: rgb(170, 170, 170);
                 font-weight: bolder;
@@ -53,7 +68,7 @@ const animateTextStyle = `
         .row_V_center {display: flex; align-items: center;}
     `
 
-const addTextBar = async ({box, text, className, style, hoverBox = null, alert = null, eventDom = null}) => {
+const addTextBar = async ({ box, text, className, style, hoverBox = null, alert = null, eventDom = null }) => {
     console.log(alert)
     const chars = Array.from(text)
 
@@ -68,13 +83,15 @@ const addTextBar = async ({box, text, className, style, hoverBox = null, alert =
         item === " " && charBox.classList.add("spaceBox")
         charBox.textContent = item
     })
-    await new Promise(requestAnimationFrame)
+    await level.helper.timer.sleep(100)
 
     /* events */
     if (hoverBox) {
         const letters = Array.from(box.querySelectorAll(".charBox"))
         const initialLeft = letters.map(item => item.offsetLeft)
         letters.forEach((item, index) => { item.style.left = initialLeft[index] + "px"; item.classList.add("absolute") })
+        const time = level.helper.timer.getTransition(letters[0])
+        const progressStep = 100 / letters.length
         let hover = false
         let progress = 0
 
@@ -83,6 +100,13 @@ const addTextBar = async ({box, text, className, style, hoverBox = null, alert =
             const animated = letters.filter(item => item.classList.contains("animated"))
             const initialPos = animated.length ? animated.reduce((total, item) => { return total + item.offsetWidth }, 0) : 0
             return { 'notAnimated': notAnimated, 'animated': animated, 'initialPos': initialPos }
+        }
+
+        const alertEvent = async () => {
+            await level.helper.timer.sleep(time)
+            progress = progress + progressStep
+            const targetEventDom = eventDom || document
+            targetEventDom.dispatchEvent(new CustomEvent(className, { detail: { 'progress': Math.round(progress) } }))
         }
 
         hoverBox.addEventListener("mouseenter", async () => {
@@ -95,23 +119,24 @@ const addTextBar = async ({box, text, className, style, hoverBox = null, alert =
                     rigthPos = rigthPos - pars.notAnimated[index].offsetWidth
                     pars.notAnimated[index].style.left = `${rigthPos}px`
                     pars.notAnimated[index].classList.add("animated")
-                    await level.helper.timer.sleep(level.helper.timer.getTransition(letters[0]) * 3 / letters.length)
-
-                    if (alert) {
-                        progress = progress + 100 / letters.length
-                        const targetEventDom = eventDom || document
-                        targetEventDom.dispatchEvent(new CustomEvent(className, { detail: { 'progress': Math.round(progress) } }))
-                    }
+                    await level.helper.timer.sleep(time * 3 / letters.length)
+                    alert && alertEvent()
                 }
             }
         })
 
         hoverBox.addEventListener("mouseleave", async () => { hover = false })
-
-        document.addEventListener(className, (e) => {
-            console.log(e.detail.progress)
-        })
     }
+}
+
+const addListeners = (progress, leftBox) => {
+
+    document.addEventListener("levelAnimation", (e) => {
+        const detailProgress = 100 - e.detail.progress
+        progress.style.clipPath = `polygon(0 ${detailProgress}%, 100% ${detailProgress}%, 100% 100%, 0% 100%)`
+        console.log(e.detail.progress)
+        e.detail.progress === 100 && (leftBox.style.boxShadow = "1px 1px 2px rgba(0, 0, 0, 0.4), inset 1px 1px 3px transparent;")
+    })
 }
 
 const init = async () => {
@@ -129,9 +154,11 @@ const init = async () => {
     const fonts = [
         { name: "neuropol", src: `${level.route}/app/src/fonts/neuropol.otf` },
         { name: "ronduit", src: `${level.route}/app/src/fonts/ronduitCapitals-light.woff` },
+        { name: "matrix", src: `${level.route}/app/src/fonts/whitrabt-webfont.woff` },
+
         { name: "xolonium", src: `${level.route}/app/src/fonts/Xolonium-Regular.otf` },
         { name: "digi", src: `${level.route}/app/src/fonts/ds-digi.ttf` },
-        { name: "matrix", src: `${level.route}/app/src/fonts/whitrabt-webfont.woff` }
+        { name: "nasa", src: `${level.route}/app/src/fonts/Nasalization Rg.otf` },
     ]
 
     const [containers] = await Promise.all([
@@ -140,8 +167,7 @@ const init = async () => {
         fonts.map(font => level.helper.fonts.add(font))
     ])
 
-/*     await level.helper.timer.sleep(50)
- */
+    addListeners(containers.progress, containers.leftBox)
     addTextBar({
         box: containers.frame,
         text: "Modular Framework",

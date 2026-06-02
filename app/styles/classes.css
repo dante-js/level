@@ -7,10 +7,17 @@
 /* display */
 .center {display: flex; justify-content: center; align-items: center;}
 .column {display: flex; flex-direction: column;}
-.column_spacing {display: flex; flex-direction: column; justify-content: space-between}
+.column_spaceBetween {display: flex; flex-direction: column; justify-content: space-between;}
+.column_spaceAround {display: flex; flex-direction: column; justify-content: space-around;}
 
 .row {display: flex; }
 .row_H_center {display: flex; justify-content: center;}
+.row_V_center {display: flex; align-items: center;}
+
+.row_spaceBetween {display: flex; justify-content: space-between;}
+
+
+.center_v {display: flex; align-items: center;}
 
 /* positions */
 .absolute {position: absolute;}
