@@ -12,7 +12,7 @@ const addStyles = (styles) => {
             document.head.appendChild(newLink)
         })
     })
-    Promise.all(promises)
+    return Promise.all(promises)
 }
 
 const addContainers = () => {
@@ -20,7 +20,7 @@ const addContainers = () => {
     landing.innerHTML = `
         <div class="landingBox">
             <div class="titles column_spacing">
-                <div class="title levelBox">Level</div>
+                <div class="title level">Level</div>
                 <span class="title frame"></span>
             </div>
             <div class="entry center">Go</div>
@@ -32,17 +32,18 @@ const addContainers = () => {
         'frame': document.querySelector(".frame")
     }
 }
+
 const animateTextStyle = `
         .animationBox {
-            border: 1px solid red;
             --time: 800ms ease-in-out;
 
             .charBox {
-                font-size: 16px;
+                font-size: 18px;
                 font-family: "ronduit";
                 color: rgb(170, 170, 170);
                 font-weight: bolder;
                 letter-spacing: 2px;
+                transition: var(--time);
             }
 
             .spaceBox {width: 10px;}
@@ -52,7 +53,8 @@ const animateTextStyle = `
         .row_V_center {display: flex; align-items: center;}
     `
 
-const addAnimateText = async (box, text, className, style, hoverBox = null) => {
+const addTextBar = async ({box, text, className, style, hoverBox = null, alert = null, eventDom = null}) => {
+    console.log(alert)
     const chars = Array.from(text)
 
     /* style */
@@ -63,50 +65,51 @@ const addAnimateText = async (box, text, className, style, hoverBox = null) => {
     const animationBox = level.helper.dom.add(box, "ul", "animationBox relative max row_V_center")
     chars.forEach((item, index) => {
         const charBox = level.helper.dom.add(animationBox, "li", "charBox")
-        item === " " && charBox.classList.replace("charBox", "spaceBox")
+        item === " " && charBox.classList.add("spaceBox")
         charBox.textContent = item
     })
-    
+    await new Promise(requestAnimationFrame)
+
     /* events */
-    await level.helper.timer.sleep(50)
     if (hoverBox) {
-        const letters = Array.from(box.querySelectorAll(".char"))
-        const time = level.helper.timer.getTransition(letters[0])
+        const letters = Array.from(box.querySelectorAll(".charBox"))
         const initialLeft = letters.map(item => item.offsetLeft)
         letters.forEach((item, index) => { item.style.left = initialLeft[index] + "px"; item.classList.add("absolute") })
         let hover = false
+        let progress = 0
 
-        /*      const animateLeft = async (resolve) => {
-                    let leftPos = 0
-                    for (let index = 0; index < letters.length; index++) {
-                        letters[index].style.left = `${leftPos}px`
-                        leftPos = leftPos + letters[index].offsetWidth
-                        await level.helper.timer.sleep(time / 6)
-                    }
-                    await level.helper.timer.sleep(time)
-                    resolve(true)
-                }
-         */
+        const getAnimationParams = () => {
+            const notAnimated = letters.filter(item => !item.classList.contains("animated"))
+            const animated = letters.filter(item => item.classList.contains("animated"))
+            const initialPos = animated.length ? animated.reduce((total, item) => { return total + item.offsetWidth }, 0) : 0
+            return { 'notAnimated': notAnimated, 'animated': animated, 'initialPos': initialPos }
+        }
+
         hoverBox.addEventListener("mouseenter", async () => {
             hover = true
-            let notAnimated = letters.filter(item => !item.classList.contains("animated"))
-            let animated = letters.filter(item => item.classList.contains("animated"))
-            let initialRight = animated.length ? animated.reduce((total, item) => { return total + item.offsetWidth }, 0) : 0
+            const pars = getAnimationParams()
+            let rigthPos = animationBox.offsetWidth - pars.initialPos
 
-            let rigthPos = animationBox.offsetWidth - initialRight
-
-            for (let index = notAnimated.length - 1; index >= 0; index--) {
+            for (let index = pars.notAnimated.length - 1; index >= 0; index--) {
                 if (hover) {
-                    rigthPos = rigthPos - notAnimated[index].offsetWidth
-                    notAnimated[index].style.left = `${rigthPos}px`
-                    notAnimated[index].classList.add("animed")
-                    await level.helper.timer.sleep(time / 5)
+                    rigthPos = rigthPos - pars.notAnimated[index].offsetWidth
+                    pars.notAnimated[index].style.left = `${rigthPos}px`
+                    pars.notAnimated[index].classList.add("animated")
+                    await level.helper.timer.sleep(level.helper.timer.getTransition(letters[0]) * 3 / letters.length)
+
+                    if (alert) {
+                        progress = progress + 100 / letters.length
+                        const targetEventDom = eventDom || document
+                        targetEventDom.dispatchEvent(new CustomEvent(className, { detail: { 'progress': Math.round(progress) } }))
+                    }
                 }
             }
         })
 
-        hoverBox.addEventListener("mouseleave", async () => {
-            hover = false
+        hoverBox.addEventListener("mouseleave", async () => { hover = false })
+
+        document.addEventListener(className, (e) => {
+            console.log(e.detail.progress)
         })
     }
 }
@@ -134,11 +137,18 @@ const init = async () => {
     const [containers] = await Promise.all([
         addContainers(),
         addStyles(styles),
-        fonts.forEach(font => level.helper.fonts.add(font))
+        fonts.map(font => level.helper.fonts.add(font))
     ])
 
-    await level.helper.timer.sleep(50)
-
-    addAnimateText(containers.frame, "Modular Framework", "levelAnimation", animateTextStyle, containers.landingBox)
+/*     await level.helper.timer.sleep(50)
+ */
+    addTextBar({
+        box: containers.frame,
+        text: "Modular Framework",
+        className: "levelAnimation",
+        style: animateTextStyle,
+        hoverBox: containers.landingBox,
+        alert: true
+    })
 }
 init()

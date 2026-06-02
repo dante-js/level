@@ -37,7 +37,7 @@ body {
                     width: fit-content;
                 }
 
-                .levelBox {
+                .level {
                     width: 100%;
                     height: 50px;
                     font-size: 44px;
@@ -49,7 +49,8 @@ body {
                 }
 
                 .frame {
-                    width: fit-content;
+                    width: 100%;
+                    height: 20px;
                 }
             }
 
