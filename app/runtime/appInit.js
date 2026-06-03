@@ -69,7 +69,6 @@ const animateTextStyle = `
     `
 
 const addTextBar = async ({ box, text, className, style, hoverBox = null, alert = null, eventDom = null }) => {
-    console.log(alert)
     const chars = Array.from(text)
 
     /* style */
@@ -129,21 +128,20 @@ const addTextBar = async ({ box, text, className, style, hoverBox = null, alert 
     }
 }
 
-const addListeners = (progress, leftBox) => {
+const addListeners = (progress) => {
 
     document.addEventListener("levelAnimation", (e) => {
         const detailProgress = 100 - e.detail.progress
         progress.style.clipPath = `polygon(0 ${detailProgress}%, 100% ${detailProgress}%, 100% 100%, 0% 100%)`
-        console.log(e.detail.progress)
-        e.detail.progress === 100 && (leftBox.style.boxShadow = "1px 1px 2px rgba(0, 0, 0, 0.4), inset 1px 1px 3px transparent;")
-    })
+/*         e.detail.progress === 100 && (leftBox.style.boxShadow = "1px 1px 2px rgba(0, 0, 0, 0.4), inset 1px 1px 3px transparent;")
+ */    })
 }
 
 const init = async () => {
     console.log("Starting app")
 
-    const levelModule = await import("/framework/runtime/level.js")
-    await levelModule.addGlobal()
+    const framework = await import(`../../framework/runtime/level.js`)
+    await framework.init()
 
     const styles = {
         clases: `${level.route}/app/styles/classes.css`,
@@ -167,7 +165,7 @@ const init = async () => {
         fonts.map(font => level.helper.fonts.add(font))
     ])
 
-    addListeners(containers.progress, containers.leftBox)
+    addListeners(containers.progress)
     addTextBar({
         box: containers.frame,
         text: "Modular Framework",

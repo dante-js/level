@@ -1,22 +1,5 @@
-const serverPath = "level"
-
-export const addGlobal = async () => {
-    const level = {}
-    /* route */
-    const route = window.location.pathname.split("/")[1] === serverPath ? `/${serverPath}` : ""
-    level.route = route
-    /* helper */
-    level.helper = {}
-    const [css, dom, fonts, timer] = await Promise.all([
-        import(`${route}/framework/dependencies/helpers/css.js`),
-        import(`${route}/framework/dependencies/helpers/dom.js`),
-        import(`${route}/framework/dependencies/helpers/fonts.js`),
-        import(`${route}/framework/dependencies/helpers/timer.js`)
-    ])
-    level.helper.css = css
-    level.helper.dom = dom
-    level.helper.fonts = fonts
-    level.helper.timer = timer
-    /* add global */
-    globalThis.level = level
+export const init = async () => {
+    /* global level */
+    const global = await import("./global.js")
+    await global.add()
 }
