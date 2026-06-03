@@ -18,13 +18,11 @@ const addStyles = (styles) => {
 const addContainers = () => {
     const landing = level.helper.dom.add(document.body, "div", "landingSection max center")
     landing.innerHTML = `
-        <div class="landingBox row_spaceBetween">
-            <div class="leftBox column_spaceBetween">
-                <div class="titles">
-                    <div class="title level center_v">Level</div>
+        <div class="landingBox row_spaceBetween v_center">
+            <div class="leftBox column_spaceBetween leftBoxHover">
+                    <div class="title level v_center">Level</div>
                     <hr>
-                    <span class="title frame center_v"></span>
-                </div>
+                    <span class="title frame v_bottom"></span>
 
                 <ul class="frameInfo row_spaceBetween">
                     <li class="infoBox row_spaceBetween">Components<span id="infoComponents" class="infoNum relative">100</span></li>
@@ -33,7 +31,7 @@ const addContainers = () => {
                 </ul>
             </div>
             <div class="accessBox center relative">
-                <div class="progressBack max"></div>
+                <div class="progress max"></div>
                 <span class="go absolute center">Go</div>
             </div>
         </div>
@@ -43,7 +41,9 @@ const addContainers = () => {
         'landingBox': document.querySelector(".landingBox"),
         'leftBox': document.querySelector(".leftBox"),
         'frame': document.querySelector(".frame"),
-        'progress': document.querySelector(".progressBack")
+        'accessBox': document.querySelector(".accessBox"),
+        'progress': document.querySelector(".progress"),
+        'go': document.querySelector(".go")
     }
 }
 
@@ -52,12 +52,12 @@ const animateTextStyle = `
             --time: 800ms ease-in-out;
 
             .charBox {
-                font-size: 14px;
+                font-size: 12px;
                 font-family: "ronduit";
                 font-family: "ronduit";
                 color: rgb(170, 170, 170);
                 font-weight: bolder;
-                letter-spacing: 2px;
+                letter-spacing: 5px;
                 transition: var(--time);
             }
 
@@ -128,13 +128,30 @@ const addTextBar = async ({ box, text, className, style, hoverBox = null, alert 
     }
 }
 
-const addListeners = (progress) => {
+const addListeners = (containers) => {
+    const progress = containers.progress
+    const go = containers.go
 
     document.addEventListener("levelAnimation", (e) => {
         const detailProgress = 100 - e.detail.progress
         progress.style.clipPath = `polygon(0 ${detailProgress}%, 100% ${detailProgress}%, 100% 100%, 0% 100%)`
-/*         e.detail.progress === 100 && (leftBox.style.boxShadow = "1px 1px 2px rgba(0, 0, 0, 0.4), inset 1px 1px 3px transparent;")
- */    })
+        if (e.detail.progress === 100) {
+            containers.accessBox.classList.add("accessBox100")
+            containers.go.classList.add("goHover")
+            containers.leftBox.classList.remove("leftBoxHover")
+            containers.landingBox.classList.add("landingBoxActive")
+        }
+    })
+}
+
+const updateInfo = () => {
+    const counterFuntions = (module) => {
+        return (Object.values(module).filter(item => typeof(item) === "function")).length
+    }
+
+    const infoHelper = document.querySelector("#infoHelper")
+    const totalHelpers = Object.values(level.helper).reduce((total, mod) => {return total + counterFuntions(mod)}, 0)
+    console.log(totalHelpers)
 }
 
 const init = async () => {
@@ -165,14 +182,16 @@ const init = async () => {
         fonts.map(font => level.helper.fonts.add(font))
     ])
 
-    addListeners(containers.progress)
+    addListeners(containers)
     addTextBar({
         box: containers.frame,
         text: "Modular Framework",
         className: "levelAnimation",
         style: animateTextStyle,
-        hoverBox: containers.landingBox,
+        hoverBox: containers.leftBox,
         alert: true
     })
+
+    updateInfo() 
 }
 init()

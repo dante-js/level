@@ -17,7 +17,8 @@
 .row_spaceBetween {display: flex; justify-content: space-between;}
 
 
-.center_v {display: flex; align-items: center;}
+.v_center {display: flex; align-items: center;}
+.v_bottom {display: flex; align-items: flex-end;}
 
 /* positions */
 .absolute {position: absolute;}
