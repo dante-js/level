@@ -25,9 +25,9 @@ const addContainers = () => {
                     <span class="title frame v_bottom"></span>
 
                 <ul class="frameInfo row_spaceBetween">
-                    <li class="infoBox row_spaceBetween">Components<span id="infoComponents" class="infoNum relative">100</span></li>
-                    <li class="infoBox row_spaceBetween">Animations<span id="infoAnimations" class="infoNum relative">100</span></li>
-                    <li class="infoBox row_spaceBetween">Helpers<span id="infoHelpers" class="infoNum relative">100</span></li>
+                    <li class="infoBox v_center">Components<span id="infoComponents" class="infoNum relative">0</span></li>
+                    <li class="infoBox v_center">Animations<span id="infoAnimations" class="infoNum relative">0</span></li>
+                    <li class="infoBox v_center">Helpers<span id="infoHelpers" class="infoNum relative">0</span></li>
                 </ul>
             </div>
             <div class="accessBox center relative">
@@ -52,12 +52,11 @@ const animateTextStyle = `
             --time: 800ms ease-in-out;
 
             .charBox {
-                font-size: 12px;
-                font-family: "ronduit";
+                font-size: 13px;
                 font-family: "ronduit";
                 color: rgb(170, 170, 170);
+                letter-spacing: 2px;
                 font-weight: bolder;
-                letter-spacing: 5px;
                 transition: var(--time);
             }
 
@@ -151,7 +150,13 @@ const updateInfo = () => {
 
     const infoHelper = document.querySelector("#infoHelper")
     const totalHelpers = Object.values(level.helper).reduce((total, mod) => {return total + counterFuntions(mod)}, 0)
-    console.log(totalHelpers)
+    console.log(level.helper)
+    level.helper.number.counter({
+        'min': 0, 
+        'max': totalHelpers,
+        'delay': 100,
+        'box': document.querySelector("#infoHelpers")
+    })
 }
 
 const init = async () => {
@@ -170,9 +175,6 @@ const init = async () => {
         { name: "neuropol", src: `${level.route}/app/src/fonts/neuropol.otf` },
         { name: "ronduit", src: `${level.route}/app/src/fonts/ronduitCapitals-light.woff` },
         { name: "matrix", src: `${level.route}/app/src/fonts/whitrabt-webfont.woff` },
-
-        { name: "xolonium", src: `${level.route}/app/src/fonts/Xolonium-Regular.otf` },
-        { name: "digi", src: `${level.route}/app/src/fonts/ds-digi.ttf` },
         { name: "nasa", src: `${level.route}/app/src/fonts/Nasalization Rg.otf` },
     ]
 
