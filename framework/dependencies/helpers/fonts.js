@@ -1,6 +1,6 @@
 export let fontReg = { 'register': null }
 
-const validateFont = (font, fontStyle, usedBy = null) => {
+const validateFont = (font, fontStyle) => {
     const previousCSS = fontStyle.textContent.includes(`url("${font.src}")`) || null
     const previousREG = fontReg.register ? Object.entries(fontReg.register).find(([name, data]) => data.src === font.src) : null
 
@@ -11,27 +11,26 @@ const validateFont = (font, fontStyle, usedBy = null) => {
         font.name = previousREG[0]
         console.error(`SRC ${font.src} DUPLICATED in REG using previous name ${font.name}`)
     }
-    if (usedBy === null && fontReg.register) {
+    if (font.usedBy === null && fontReg.register) {
         console.error(`${font.name} no element using, ERROR, REGISTER is active `)
         return { valid: null, previousCSS }
     }
     return { valid: true, previousCSS }
 }
 
-const register = (font, usedBy = null) => {
+const register = (font) => {
     if (fontReg.register) {
         if (!fontReg.register[font.name]) {
             const newFont = fontReg.register[font.name] = {}
             newFont["src"] = font.src
-            newFont["usedBy"] = [usedBy]
+            newFont["usedBy"] = font.usedBy
         } else {
-            fontReg.register[font.name]["usedBy"].push(usedBy)
+            fontReg.register[font.name].usedBy.push(font.usedBy)
         }
-        console.log(fontReg)
     }
 }
 
-export const add = (font, usedBy = null) => {
+export const add = (font) => {
     let fontStyle = document.head.querySelector(".dynamicStyle_fonts")
     if (!fontStyle) {
         fontStyle = document.createElement("style")
@@ -48,7 +47,7 @@ export const add = (font, usedBy = null) => {
     }
 
     /* validate */
-    const validate = validateFont(font, fontStyle, usedBy)
+    const validate = validateFont(font, fontStyle)
     if (validate.valid === null) return
 
     /* add font */
@@ -64,6 +63,6 @@ export const add = (font, usedBy = null) => {
         `
     }
 
-    /* if register actived */
-    register(font, usedBy)
+    /* if register exists */
+    register(font)
 }

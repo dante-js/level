@@ -145,14 +145,14 @@ const addListeners = (containers) => {
 
 const updateInfo = () => {
     const counterFuntions = (module) => {
-        return (Object.values(module).filter(item => typeof(item) === "function")).length
+        return (Object.values(module).filter(item => typeof (item) === "function")).length
     }
 
     const infoHelper = document.querySelector("#infoHelper")
-    const totalHelpers = Object.values(level.helper).reduce((total, mod) => {return total + counterFuntions(mod)}, 0)
+    const totalHelpers = Object.values(level.helper).reduce((total, mod) => { return total + counterFuntions(mod) }, 0)
     console.log(level.helper)
     level.helper.number.counter({
-        'min': 0, 
+        'min': 0,
         'max': totalHelpers,
         'delay': 100,
         'box': document.querySelector("#infoHelpers")
@@ -167,15 +167,16 @@ const init = async () => {
 
     const styles = {
         clases: `${level.route}/app/styles/classes.css`,
+        config: `${level.route}/app/styles/config.css`,
         main: `${level.route}/app/styles/main.css`,
-        config: `${level.route}/app/styles/config.css`
+        landing: `${level.route}/app/styles/landing.css`
     }
 
     const fonts = [
-        { name: "neuropol", src: `${level.route}/app/src/fonts/neuropol.otf` },
-        { name: "ronduit", src: `${level.route}/app/src/fonts/ronduitCapitals-light.woff` },
-        { name: "matrix", src: `${level.route}/app/src/fonts/whitrabt-webfont.woff` },
-        { name: "nasa", src: `${level.route}/app/src/fonts/Nasalization Rg.otf` },
+        { name: "neuropol", src: `${level.route}/app/src/fonts/neuropol.otf`, usedBy: "landing" },
+        { name: "ronduit", src: `${level.route}/app/src/fonts/ronduitCapitals-light.woff`, usedBy: "landing" },
+        { name: "matrix", src: `${level.route}/app/src/fonts/whitrabt-webfont.woff`, usedBy: "landing" },
+        { name: "nasa", src: `${level.route}/app/src/fonts/Nasalization Rg.otf`, usedBy: "landing" },
     ]
 
     const [containers] = await Promise.all([
@@ -194,6 +195,6 @@ const init = async () => {
         alert: true
     })
 
-    updateInfo() 
+    updateInfo()
 }
 init()
