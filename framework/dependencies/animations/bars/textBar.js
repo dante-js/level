@@ -1,4 +1,4 @@
-const addTextBar = async ({ box, text, className, style, hoverBox = null, alert = null, eventDom = null }) => {
+export const add = async ({ box, text, className, style, hoverBox = null, alert = null, eventDom = null }) => {
     const chars = Array.from(text)
 
     /* style */
