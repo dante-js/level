@@ -3,7 +3,7 @@ export const addStyles = (styles, dom = null) => {
         return new Promise((resolve, reject) => {
             const newLink = document.createElement("link")
             newLink.setAttribute("data-name", name)
-            newLink.href = level.route + url
+            newLink.href = url
             newLink.rel = "stylesheet"
 
             newLink.onload = () => resolve()
