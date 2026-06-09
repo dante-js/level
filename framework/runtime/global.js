@@ -37,4 +37,5 @@ export const add = async () => {
 
     /* add global */
     globalThis.level = level
+    console.log(level)
 }

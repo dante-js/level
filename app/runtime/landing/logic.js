@@ -21,7 +21,6 @@ export const updateInfo = () => {
 
     const infoHelper = document.querySelector("#infoHelper")
     const totalHelpers = Object.values(level.helper).reduce((total, mod) => { return total + counterFuntions(mod) }, 0)
-    console.log(level.helper)
     level.helper.number.counter({
         'min': 0,
         'max': totalHelpers,
@@ -29,3 +28,23 @@ export const updateInfo = () => {
         'box': document.querySelector("#infoHelpers")
     })
 }
+
+export const textBarStyle = `
+    .animationBox {
+        --time: 800ms ease-in-out;
+
+        .charBox {
+            font-size: 13px;
+            font-family: "ronduit";
+            color: rgb(170, 170, 170);
+            letter-spacing: 2px;
+            font-weight: bolder;
+            transition: var(--time);
+        }
+
+        .spaceBox {width: 10px;}
+    } 
+
+    .max {width: 100%; height: 100%;}
+    .row_V_center {display: flex; align-items: center;}
+`
