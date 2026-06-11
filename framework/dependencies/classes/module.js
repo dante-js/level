@@ -3,24 +3,49 @@ class module {
         events: new AbortController()
 
     }
-    #state = "ready"
+    #state = true
     #eventsSaved = {}
+
+    #checkID(element) {
+        if (!element.id) {
+            console.error(this, element, "no ID ELEMENT")
+            return null
+        } else return element.id
+    }
+
+    #checkHandler(handler) {
+        if (!handler.name ||handler.name === "anonymous") {
+            console.error(this, "function cant be anonymous")
+        } else return handler
+    }
 
     /* listeners */
     addEvent(element, event, handler) {
-        element.addEventListener(event, handler, { signal: this.#reg.events.signal })
-        !this.#eventsSaved[element.id] && (this.#eventsSaved[element.id] = [])
-        this.#eventsSaved[element.id].push({ 'event': event, 'handler': handler })
+        if (this.#state) {
+            const id = this.#checkID(element)
+            const validHandler = this.#checkHandler(handler)
+
+            if (id && validHandler) {
+                element.addEventListener(event, handler, { signal: this.#reg.events.signal })
+                !this.#eventsSaved[id] && (this.#eventsSaved[id] = [])
+                this.#eventsSaved[id].push({ 'event': event, 'handler': validHandler })
+            }
+
+        } else {
+            return console.error(this, "previously cleaned")
+        }
     }
 
     removeEvent(element, event, handler) {
-        const item = this.#eventsSaved[element.id] || null
-        const itemMatch = item?.find(object => object.event === event && object.handler === handler) || null
+        if (this.#state) {
+            const id = this.#checkID(element)
+            const elementInReg = this.#eventsSaved[id]?.find(object => object.event === event && object.handler === handler) || null
 
-        if (itemMatch) {
-            element.removeEventListener(event, handler)
-            this.#eventsSaved[element.id] = item.filter(object => object !== itemMatch)
-            !this.#eventsSaved[element.id].length && delete this.#eventsSaved[element.id]
+            if (elementInReg) {
+                element.removeEventListener(event, handler)
+                this.#eventsSaved[id] = this.#eventsSaved[id].filter(object => object !== elementInReg)
+                !this.#eventsSaved[id].length && delete this.#eventsSaved[id]
+            }
         }
     }
 
@@ -49,4 +74,4 @@ class module {
     }
 }
 
-export default new module()
+export default module
