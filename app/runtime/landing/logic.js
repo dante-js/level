@@ -14,14 +14,14 @@ export const addListeners = (containers) => {
     })
 }
 
-export const updateInfo = () => {
+export const updateInfo = (HELPER) => {
     const counterFuntions = (module) => {
         return (Object.values(module).filter(item => typeof (item) === "function")).length
     }
 
     const infoHelper = document.querySelector("#infoHelper")
-    const totalHelpers = Object.values(level.helper).reduce((total, mod) => { return total + counterFuntions(mod) }, 0)
-    level.helper.number.counter({
+    const totalHelpers = Object.values(HELPER).reduce((total, mod) => { return total + counterFuntions(mod) }, 0)
+    HELPER.number.counter({
         'min': 0,
         'max': totalHelpers,
         'delay': 100,

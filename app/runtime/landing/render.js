@@ -1,5 +1,5 @@
-export const addContainers = () => {
-    const landing = level.helper.dom.add(document.body, "div", "landingSection max center")
+export const addContainers = (HELPER) => {
+    const landing = HELPER.dom.add(document.body, "div", "landingSection max center")
     landing.innerHTML = `
         <div class="landingBox row_spaceBetween v_center">
             <div class="leftBox column_spaceBetween leftBoxHover">

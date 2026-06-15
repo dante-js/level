@@ -1,13 +1,11 @@
-const serverPath = "level"
+const serverPath = "/level"
 
 export const add = async () => {
-    const level = {}
     /* route */
-    const route = window.location.pathname.split("/")[1] === serverPath ? `/${serverPath}` : ""
-    level.route = route
+    const route = window.location.pathname.split("/")[1] === serverPath ? serverPath : ""
 
     /* helpers */
-    level.helper = {}
+    const helper = {}
     const [css, dom, fonts, resolve, number, timer] = await Promise.all([
         import(`${route}/framework/dependencies/helpers/css.js`),
         import(`${route}/framework/dependencies/helpers/dom.js`),
@@ -16,26 +14,25 @@ export const add = async () => {
         import(`${route}/framework/dependencies/helpers/number.js`),
         import(`${route}/framework/dependencies/helpers/timer.js`)
     ])
-    level.helper.css = css
-    level.helper.dom = dom
-    level.helper.fonts = fonts
-    level.helper.resolve = resolve
-    level.helper.number = number
-    level.helper.timer = timer
+
+    helper.css = css
+    helper.dom = dom
+    helper.fonts = fonts
+    helper.resolve = resolve
+    helper.number = number
+    helper.timer = timer
 
     /* animations */
-    level.animation = {}
+    const animation = {}
     const textBar_mod = `${route}/framework/dependencies/animations/bars/textBar.js`
 
-    const [textBar, textBar2] = await Promise.all([
+    const [textBar] = await Promise.all([
         import(textBar_mod)
     ])
 
-    level.animation.bar = {
-        textBar: textBar
-    }
+    animation.bar = {}
+    animation.bar.textBar = textBar
 
-    /* add global */
-    globalThis.level = level
-    console.log(level)
+    /* injection */
+    return({'route': route, 'helper': helper, 'animation': animation})
 }

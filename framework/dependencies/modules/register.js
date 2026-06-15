@@ -1,10 +1,12 @@
 class module {
     #reg = {
-        events: new AbortController()
-
+        events: new AbortController(),
+        timers: new WeakMap()
     }
+
     #state = true
     #eventsSaved = {}
+    #timersSaved = {}
 
     #checkID(element) {
         if (!element.id) {
@@ -14,9 +16,13 @@ class module {
     }
 
     #checkHandler(handler) {
-        if (!handler.name ||handler.name === "anonymous") {
+        if (!handler.name || handler.name === "anonymous") {
             console.error(this, "function cant be anonymous")
         } else return handler
+    }
+
+    #checkTimer(timer) {
+
     }
 
     /* listeners */
@@ -53,6 +59,14 @@ class module {
         this.#reg.events.abort()
     }
 
+    /* timers */
+    addTimer(id, type, value) {
+        
+    }
+
+    /* observers */
+
+
 
     /* clean */
     cleanModule() {
@@ -69,7 +83,9 @@ class module {
     getState() {
         return {
             state: this.#state,
-            reg: { ...this.#eventsSaved }
+            reg: {
+                'events': { ...this.#eventsSaved }
+            }
         }
     }
 }

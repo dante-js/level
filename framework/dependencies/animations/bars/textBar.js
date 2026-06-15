@@ -1,25 +1,27 @@
-export const add = async ({ box, text, className, style, hoverBox = null, alert = null, eventDom = null }) => {
+export const dependencies = [ "dom", "timer" ]
+
+export const add = async ({ box, text, className, style, hoverBox = null, alert = null, eventDom = null, HELPER = null }) => {
     const chars = Array.from(text)
 
     /* style */
-    const animationStyle = level.helper.dom.add(document.head, "style", `animation_${className}`)
+    const animationStyle = HELPER.dom.add(document.head, "style", `animation_${className}`)
     animationStyle.textContent = style
 
     /* draw */
-    const animationBox = level.helper.dom.add(box, "ul", "animationBox relative max row_V_center")
+    const animationBox = HELPER.dom.add(box, "ul", "animationBox relative max row_V_center")
     chars.forEach((item, index) => {
-        const charBox = level.helper.dom.add(animationBox, "li", "charBox")
+        const charBox = HELPER.dom.add(animationBox, "li", "charBox")
         item === " " && charBox.classList.add("spaceBox")
         charBox.textContent = item
     })
-    await level.helper.timer.sleep(100)
+    await HELPER.timer.sleep(100)
 
     /* events */
     if (hoverBox) {
         const letters = Array.from(box.querySelectorAll(".charBox"))
         const initialLeft = letters.map(item => item.offsetLeft)
         letters.forEach((item, index) => { item.style.left = initialLeft[index] + "px"; item.classList.add("absolute") })
-        const time = level.helper.timer.getTransition(letters[0])
+        const time = HELPER.timer.getTransition(letters[0])
         const progressStep = 100 / letters.length
         let hover = false
         let progress = 0
@@ -32,7 +34,7 @@ export const add = async ({ box, text, className, style, hoverBox = null, alert 
         }
 
         const alertEvent = async () => {
-            await level.helper.timer.sleep(time)
+            await HELPER.timer.sleep(time)
             progress = progress + progressStep
             const targetEventDom = eventDom || document
             targetEventDom.dispatchEvent(new CustomEvent(className, { detail: { 'progress': Math.round(progress) } }))
@@ -49,7 +51,7 @@ export const add = async ({ box, text, className, style, hoverBox = null, alert 
                         rigthPos = rigthPos - pars.notAnimated[index].offsetWidth
                         pars.notAnimated[index].style.left = `${rigthPos}px`
                         pars.notAnimated[index].classList.add("animated")
-                        await level.helper.timer.sleep(time * 3 / letters.length)
+                        await HELPER.timer.sleep(time * 3 / letters.length)
                         alert && alertEvent()
                     }
                 }
