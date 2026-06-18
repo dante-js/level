@@ -1,12 +1,8 @@
-class module {
-    #reg = {
-        events: new AbortController(),
-        timers: new WeakMap()
-    }
-
-    #state = true
-    #eventsSaved = {}
-    #timersSaved = {}
+class moduleReg {
+    state = true
+    events = {} /* abortControllers */
+    timers = new WeakMap()
+    fonts = {}
 
     #checkID(element) {
         if (!element.id) {
@@ -27,41 +23,53 @@ class module {
 
     /* listeners */
     addEvent(element, event, handler) {
-        if (this.#state) {
-            const id = this.#checkID(element)
-            const validHandler = this.#checkHandler(handler)
+        if (!this.state) return console.error(this, "previously cleaned")
 
-            if (id && validHandler) {
-                element.addEventListener(event, handler, { signal: this.#reg.events.signal })
-                !this.#eventsSaved[id] && (this.#eventsSaved[id] = [])
-                this.#eventsSaved[id].push({ 'event': event, 'handler': validHandler })
+        const id = this.#checkID(element)
+        const validHandler = this.#checkHandler(handler)
+
+        if (id && validHandler) {
+            const reg = this.events[id] ||= {}
+            reg[event] ||= []
+            const newEvent = {
+                'handler': handler,
+                'signal': new AbortController()
             }
 
-        } else {
-            return console.error(this, "previously cleaned")
+            reg[event].push(newEvent)
+            element.addEventListener(event, handler, { signal: newEvent.signal.signal })
         }
     }
 
     removeEvent(element, event, handler) {
-        if (this.#state) {
+        if (this.state) {
             const id = this.#checkID(element)
-            const elementInReg = this.#eventsSaved[id]?.find(object => object.event === event && object.handler === handler) || null
+            const elementInReg = this.events[id] || null
+            const eventInElement = elementInReg?.[event] || null
+            const handlerIndex = eventInElement?.findIndex(obj => obj.handler === handler)
 
-            if (elementInReg) {
-                element.removeEventListener(event, handler)
-                this.#eventsSaved[id] = this.#eventsSaved[id].filter(object => object !== elementInReg)
-                !this.#eventsSaved[id].length && delete this.#eventsSaved[id]
-            }
+            if (!eventInElement) return console.error(this, "no event", event, "in element")
+            if (handlerIndex < 0) return console.error(this, "not found hander in event")
+
+            eventInElement[handlerIndex].signal.abort()
+            eventInElement.splice(handlerIndex, 1)
+            eventInElement.length === 0 && delete elementInReg[event]
+            Object.keys(this.events[id]).length === 0 && delete this.events[id]
         }
     }
 
     #removeAllEvents() {
-        this.#reg.events.abort()
+        Object.values(this.events).forEach(elementInReg => {
+            Object.values(elementInReg).forEach(event => {
+                event.forEach(obj => obj.signal.abort())
+            })
+        })
+        this.events = {}
     }
 
     /* timers */
     addTimer(id, type, value) {
-        
+
     }
 
     /* observers */
@@ -70,10 +78,10 @@ class module {
 
     /* clean */
     cleanModule() {
-        if (this.#state !== null) {
+        if (this.state !== null) {
             this.#removeAllEvents()
 
-            this.#state = null
+            this.state = null
         } else {
             console.error(this, "previously cleaned")
         }
@@ -82,12 +90,12 @@ class module {
     /* info */
     getState() {
         return {
-            state: this.#state,
+            state: this.state,
             reg: {
-                'events': { ...this.#eventsSaved }
+                'events': { ...this.events }
             }
         }
     }
 }
 
-export default module
+export default moduleReg

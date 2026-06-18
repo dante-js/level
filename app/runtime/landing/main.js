@@ -1,12 +1,12 @@
 const init = async () => {
-    console.log("Starting app")
+    console.log("Starting app-landing")
 
     /* level map */
-    const level_map = await import("../../../framework/runtime/level_map.js")
-    const helper = await level_map.require("helper", ["css", "dom", "font", "number", "resolve"])
-    const animation = await level_map.require("animation", ["textProgressBar"])
+    const deps_map = await import("../../../framework/runtime/deps_map.js")
+    const helper = await deps_map.require("helper", ["css", "dom", "font", "number", "resolve"])
+    const animation = await deps_map.require("animation", ["textProgressBar"])
 
-    const ROUTE = level_map.route
+    const ROUTE = deps_map.route
     const HELPER = helper
     const ANIMATION = animation
 
@@ -14,9 +14,6 @@ const init = async () => {
     const landing = {
         render: `${ROUTE}/app/runtime/landing/render.js`,
         logic: `${ROUTE}/app/runtime/landing/logic.js`,
-    }
-
-    const dependencies = {
         register: `${ROUTE}/framework/dependencies/modules/register.js`
     }
 
@@ -37,15 +34,19 @@ const init = async () => {
     const [modules] = await Promise.all([
         HELPER.resolve.object(landing),
         HELPER.css.addStyles(styles, document.head),
-        fonts.map(font => HELPER.font.add(font))
     ])
 
+    /* register */
+    const moduleReg = new landing.register()
+    fonts.map(font => HELPER.font.add(font, moduleReg))
+    console.log(moduleReg)
+
+
+    /* landing */
     const containers = modules.render.addContainers(HELPER)
     modules.logic.addListeners(containers)
 
-    /* animation textBar */
-    const animationHelpers = await level_map.require("helper", ANIMATION.textProgressBar.dependencies)
-
+    const animationHelpers = await deps_map.require("helper", ANIMATION.textProgressBar.dependencies)
     ANIMATION.textProgressBar.add({
         box: containers.frame,
         text: "Modular Framework",

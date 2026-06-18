@@ -1,8 +1,6 @@
-export let fontReg = { 'register': null }
-
-const validateFont = (font, fontStyle) => {
+const validateFont = (font, fontStyle, fontsReg) => {
     const previousCSS = fontStyle.textContent.includes(`url("${font.src}")`) || null
-    const previousREG = fontReg.register ? Object.entries(fontReg.register).find(([name, data]) => data.src === font.src) : null
+    const previousREG = fontsReg.font ? Object.entries(fontsReg.font).find(([name, data]) => data.src === font.src) : null
 
     if (previousCSS) {
         console.error(`SRC ${font.src} DUPLICATED in CSS please use last name`)
@@ -11,26 +9,27 @@ const validateFont = (font, fontStyle) => {
         font.name = previousREG[0]
         console.error(`SRC ${font.src} DUPLICATED in REG using previous name ${font.name}`)
     }
-    if (font.usedBy === null && fontReg.register) {
+    if (font.usedBy === null && fontsReg.font) {
         console.error(`${font.name} no element using, ERROR, REGISTER is active `)
         return { valid: null, previousCSS }
     }
     return { valid: true, previousCSS }
 }
 
-const register = (font) => {
-    if (fontReg.register) {
-        if (!fontReg.register[font.name]) {
-            const newFont = fontReg.register[font.name] = {}
+const register = (font, reg) => {
+    if (reg) {
+        if (!reg.fonts[font.name]) {
+            const newFont = reg.fonts[font.name] = {}
             newFont["src"] = font.src
             newFont["usedBy"] = font.usedBy
         } else {
-            fontReg.register[font.name].usedBy.push(font.usedBy)
+            reg.fonts[font.name].usedBy.push(font.usedBy)
         }
     }
 }
 
-export const add = (font) => {
+export const add = (font, reg = null) => {
+
     let fontStyle = document.head.querySelector(".dynamicStyle_fonts")
     if (!fontStyle) {
         fontStyle = document.createElement("style")
@@ -47,7 +46,7 @@ export const add = (font) => {
     }
 
     /* validate */
-    const validate = validateFont(font, fontStyle)
+    const validate = validateFont(font, fontStyle, reg)
     if (validate.valid === null) return
 
     /* add font */
@@ -63,6 +62,6 @@ export const add = (font) => {
         `
     }
 
-    /* if register exists */
-    register(font)
+
+    register(font, reg)
 }
