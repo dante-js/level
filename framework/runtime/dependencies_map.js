@@ -50,6 +50,8 @@ export const require = async (group, modulesName = null) => {
         return
     }
 
+    if (modulesName === null) return null
+
     if (!modulesName) {
         await resolveAll(dependencies[group])
         return dependencies[group]

@@ -17,6 +17,10 @@ const validateFont = (font, fontStyle, fontsReg) => {
 }
 
 const register = (font, reg) => {
+
+    console.log(reg)
+    console.log(reg.fonts)
+
     if (reg) {
         if (!reg.fonts[font.name]) {
             const newFont = reg.fonts[font.name] = {}

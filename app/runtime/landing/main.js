@@ -1,20 +1,21 @@
 const init = async () => {
     console.log("Starting app-landing")
 
-    /* level map */
-    const deps_map = await import("../../../framework/runtime/deps_map.js")
-    const helper = await deps_map.require("helper", ["css", "dom", "font", "number", "resolve"])
-    const animation = await deps_map.require("animation", ["textProgressBar"])
+    /* dependencies */
+    const dependencies_map = await import("../../../framework/runtime/dependencies_map.js")
+    const resolve = await dependencies_map.require("helper", "resolve")
+    const ROUTE = dependencies_map.route
 
-    const ROUTE = deps_map.route
-    const HELPER = helper
-    const ANIMATION = animation
+    const module_class = await import(`${ROUTE}/framework/dependencies/modules/loader.js`)
+    const module = new module_class.module()
 
-    /* module */
+    /* declarations */
+    const helper = ["css", "dom", "font", "number"]
+    const animation = ["textProgressBar"]
+
     const landing = {
         render: `${ROUTE}/app/runtime/landing/render.js`,
         logic: `${ROUTE}/app/runtime/landing/logic.js`,
-        register: `${ROUTE}/framework/dependencies/modules/register.js`
     }
 
     const styles = {
@@ -31,22 +32,36 @@ const init = async () => {
         { name: "nasa", src: `${ROUTE}/app/src/fonts/Nasalization_Rg.otf`, usedBy: "landing" },
     ]
 
-    const [modules] = await Promise.all([
+
+    /*     const HELPER = helper
+        const ANIMATION = animation
+     */
+    /* module */
+
+
+/*     const [modules] = await Promise.all([
         HELPER.resolve.object(landing),
         HELPER.css.addStyles(styles, document.head),
     ])
+ */
+    /* module inyection */
+    module.add({
+        register: true,
+        helpers: ["font"],
+        fonts: fonts,
+    })
 
     /* register */
-    const moduleReg = new landing.register()
-    fonts.map(font => HELPER.font.add(font, moduleReg))
-    console.log(moduleReg)
-
+    /*     const moduleReg = new landing.register()
+        fonts.map(font => HELPER.font.add(font, moduleReg))
+        console.log(moduleReg)
+     */
 
     /* landing */
     const containers = modules.render.addContainers(HELPER)
     modules.logic.addListeners(containers)
 
-    const animationHelpers = await deps_map.require("helper", ANIMATION.textProgressBar.dependencies)
+    const animationHelpers = await dependencies_map.require("helper", ANIMATION.textProgressBar.dependencies)
     ANIMATION.textProgressBar.add({
         box: containers.frame,
         text: "Modular Framework",
