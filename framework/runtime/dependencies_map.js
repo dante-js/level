@@ -1,8 +1,7 @@
 import * as level_config from "../config.js"
+import * as routing from "./routing.js"
 
-export const route = window.location.pathname.split("/")[1] === level_config.serverPath
-    ? level_config.serverPath
-    : ""
+const route = routing.init()
 
 const dependencies = {
     helper: {

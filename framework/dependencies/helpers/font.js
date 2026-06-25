@@ -1,19 +1,20 @@
-const validateFont = (font, fontStyle, fontsReg) => {
+const validateFont = (font, fontStyle, reg) => {
     const previousCSS = fontStyle.textContent.includes(`url("${font.src}")`) || null
-    const previousREG = fontsReg.font ? Object.entries(fontsReg.font).find(([name, data]) => data.src === font.src) : null
-
+    /*     const previousREG = reg.font ? Object.entries(reg.font).find(([name, data]) => data.src === font.src) : null
+     */
     if (previousCSS) {
-        console.error(`SRC ${font.src} DUPLICATED in CSS please use last name`)
+        console.error(`SRC ${font.src} DUPLICATED in module style please use: [${font.name}]`)
+        return { valid: false, previousCSS }
     }
-    if (previousREG) {
+/*     if (previousREG) {
         font.name = previousREG[0]
         console.error(`SRC ${font.src} DUPLICATED in REG using previous name ${font.name}`)
     }
-    if (font.usedBy === null && fontsReg.font) {
+    if (font.usedBy === null && reg.font) {
         console.error(`${font.name} no element using, ERROR, REGISTER is active `)
         return { valid: null, previousCSS }
     }
-    return { valid: true, previousCSS }
+ */    return { valid: true, previousCSS }
 }
 
 const register = (font, reg) => {
@@ -32,14 +33,18 @@ const register = (font, reg) => {
     }
 }
 
-export const add = (font, reg = null) => {
+const createStyle = (styleID) => {
+    const fontStyle = document.createElement("style")
+    fontStyle.id = styleID
+    document.head.appendChild(fontStyle)
+    return fontStyle
+}
 
-    let fontStyle = document.head.querySelector(".dynamicStyle_fonts")
-    if (!fontStyle) {
-        fontStyle = document.createElement("style")
-        fontStyle.classList.add("dynamicStyle_fonts")
-        document.head.appendChild(fontStyle);
-    }
+export const add = (font, module = null, reg = null) => {
+    const styleID = module + "_fonts" || "imported_fonts"
+    let fontStyle = document.head.querySelector(`#${styleID}`) || null
+    !fontStyle && (fontStyle = createStyle(styleID))
+    
     const formatMap = {
         woff2: "woff2",
         woff: "woff",
@@ -67,5 +72,5 @@ export const add = (font, reg = null) => {
     }
 
 
-    register(font, reg)
-}
+/*     register(font, reg)
+ */}
