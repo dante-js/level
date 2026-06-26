@@ -1,9 +1,8 @@
-/* import * as level_config from "../config.js"
- */
 export const init = () => {
-    console.log(window.location.pathname)
-    const route = window.location.pathname === "/"
-        ? ""
-        : window.location.pathname
-    return route
+    const path = window.location.pathname;
+    const base = path === "/" ? "" : path.substring(0, path.lastIndexOf('/'));
+
+    const baseTag = document.createElement('base');
+    baseTag.href = `${window.location.origin}${base}/`;
+    document.head.prepend(baseTag);
 }

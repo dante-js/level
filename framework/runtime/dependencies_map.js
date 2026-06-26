@@ -1,18 +1,14 @@
-import * as routing from "./routing.js"
-
-const route = routing.init()
-
 const dependencies = {
     helper: {
-        'css': `${route}/framework/dependencies/helpers/css.js`,
-        'dom': `${route}/framework/dependencies/helpers/dom.js`,
-        'font': `${route}/framework/dependencies/helpers/font.js`,
-        'resolve': `${route}/framework/dependencies/helpers/resolve.js`,
-        'number': `${route}/framework/dependencies/helpers/number.js`,
-        'timer': `${route}/framework/dependencies/helpers/timer.js`
+        css: "/framework/dependencies/helpers/css.js",
+        dom: "/framework/dependencies/helpers/dom.js",
+        font: "/framework/dependencies/helpers/font.js",
+        resolve: "/framework/dependencies/helpers/resolve.js",
+        number: "/framework/dependencies/helpers/number.js",
+        timer: "/framework/dependencies/helpers/timer.js"
     },
     animation: {
-        'textProgressBar': `${route}/framework/dependencies/animations/bars/textBar.js`
+        textProgressBar: "/framework/dependencies/animations/bars/textBar.js"
     }
 }
 

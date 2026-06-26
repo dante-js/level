@@ -1,4 +1,3 @@
-import * as routing from "../../runtime/routing.js"
 import * as resolve from "../helpers/resolve.js"
 import * as dependencies_map from "../../runtime/dependencies_map.js"
 
@@ -7,7 +6,6 @@ export class addModule {
     HELPER = null
     OPTIONAL = null
     RESOLVE = resolve.object
-    ROUTE = routing.init()
 
     async #importStatics(imports) {
         return this.RESOLVE.object(imports)
@@ -32,7 +30,7 @@ export class addModule {
             { register: null }
         ]
 
-        register && (optional.register = `${this.ROUTE}/framework/runtime/register.js`)
+        register && (optional.register = "/framework/runtime/register.js")
         this.RESOLVE(optional)
         this.OPTIONAL = optional
 

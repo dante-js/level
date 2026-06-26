@@ -7,8 +7,8 @@ export const init = async () => {
 
     /* module declarations */
     const landing = {
-        render: `${module.ROUTE}/app/modules/landing/render2.js`,
-        logic: `${module.ROUTE}/app/modules/landing/logic2.js`
+        render: "/app/modules/landing/render2.js",
+        logic: "/app/modules/landing/logic2.js"
     }
 
     const fonts = [
