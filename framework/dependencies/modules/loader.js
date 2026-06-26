@@ -1,14 +1,16 @@
 import * as routing from "../../runtime/routing.js"
 import * as resolve from "../helpers/resolve.js"
+import * as dependencies_map from "../../runtime/dependencies_map.js"
 
 export class addModule {
     ANIMATION = null
     HELPER = null
-    RESOLVE = resolve
+    OPTIONAL = null
+    RESOLVE = resolve.object
     ROUTE = routing.init()
 
     async #importStatics(imports) {
-        return Promise.all(imports.map(item => import(item)))
+        return this.RESOLVE.object(imports)
     }
 
     async add({
@@ -31,19 +33,27 @@ export class addModule {
         ]
 
         register && (optional.register = `${this.ROUTE}/framework/runtime/register.js`)
-        this.RESOLVE.object(optional)
-/*         const [dependencies_map, registerModule = null] = await this.#importStatics(optional)
- */
-        /* animations */
-/*         animations && (this.ANIMATION = await dependencies_map.require("animation", animations))
- */
+        this.RESOLVE(optional)
+        this.OPTIONAL = optional
+
         /* helpers */
-/*         !(helpers.includes("resolve")) && helpers.push("resolve")
         fonts.length !== 0 && helpers.push("font")
 
-        this.HELPER = await dependencies_map.require("helper", helpers)
- */
+
+        helpers.length !== 0 && dependencies_map.require("helper", helpers)
+        this.HELPER = helpers
+
+
+
+        /* animations */
+        /*         animations && (this.ANIMATION = await dependencies_map.require("animation", animations))
+         */
+
+
         /* fonts */
-/*         fonts.map(item => this.HELPER.font.add(item, name))
- */    }
+        /*         fonts.map(item => this.HELPER.font.add(item, name))
+         */
+
+        console.log(this.ROUTE, this.OPTIONAL, this.HELPER)
+    }
 }

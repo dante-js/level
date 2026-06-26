@@ -1,4 +1,3 @@
-import * as level_config from "../config.js"
 import * as routing from "./routing.js"
 
 const route = routing.init()

@@ -3,23 +3,26 @@ export const init = async () => {
 
     /* module instance */
     const module_class = await import("../../../framework/dependencies/modules/loader.js")
-    const module = new module_class.module()
+    const module = new module_class.addModule()
 
     /* module declarations */
-    const helper = ["dom"]
-    const animation = []
-    const ROUTE = module.ROUTE
-
     const landing = {
-        render: `${ROUTE}/app/runtime/landing/render1.js`,
-        logic: `${ROUTE}/app/runtime/landing/logic1.js`,
+        render: `${module.ROUTE}/app/modules/landing/render2.js`,
+        logic: `${module.ROUTE}/app/modules/landing/logic2.js`
     }
 
     const fonts = [
 
     ]
 
-    module.hel
+    await Promise.all([
+        module.RESOLVE(landing),
+        module.RESOLVE(fonts)
+
+    ])
+
+    const helper = ["dom"]
+    const animation = []
 
     /* module init */
     await module.add({
@@ -29,5 +32,6 @@ export const init = async () => {
         fonts: fonts
     })
 
-/*     landing.render.init()
- */}
+    /* sequence */
+    landing.render.init()
+}
